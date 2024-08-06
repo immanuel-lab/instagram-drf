@@ -31,7 +31,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    #  'daphne',
+       'daphne',
+   
+     'corsheaders',
+  
     'chat',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,14 +42,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+        'channels',
     'rest_framework',
     'authentication',
-    'rest_framework_simplejwt',
+   'rest_framework_simplejwt',
+   
 ]
 
 
 
 MIDDLEWARE = [
+     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -74,9 +82,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'instagram.wsgi.application'
+# WSGI_APPLICATION = 'instagram.wsgi.application'
 
-# ASGI_APPLICATION = "instagram.asgi.application"
+ASGI_APPLICATION = "instagram.asgi.application"
 
 
 # Database
@@ -143,6 +151,9 @@ REST_FRAMEWORK = {
 }
 
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+
 import os
 
 # for image handling
@@ -156,8 +167,15 @@ JWT_SETTINGS = SIMPLE_JWT
 
 
 
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer"
-#     }
-# }
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
+
+APPEND_SLASH=True
+
+
+
+

@@ -2,7 +2,8 @@ from django.urls import path
 from .views import create_custom_user
 from . import views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 
@@ -30,6 +31,9 @@ urlpatterns = [
     # path('image/<int:pk>/', views.ImageView.as_view(), name='image_detail'),
 
       path('images/', views.images_view, name='image_view'),  
-      # path('requests/', views.request_methods, name='requests'),  
+        path('images/<int:pk>/comments/', views.update_comments, name='update_comments'),
+        path('images/<int:pk>/', views.delete_image, name='delete_image'),
+      
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-]
+

@@ -46,24 +46,8 @@ from .models import Image
 from .serializers import ImageSerializer
 
 
-# class FeedView(generics.ListAPIView):
-#     serializer_class = ImageSerializer
-#     permission_classes = [permissions.IsAuthenticated]
 
-#     def get_queryset(self):
-#         return Image.objects.all()
-    
-# class UploadImageView(generics.CreateAPIView):
-#     serializer_class = ImageSerializer
-#     permission_classes = [permissions.IsAuthenticated]
 
-#     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)
-
-# class ImageView(generics.RetrieveAPIView):
-#     serializer_class = ImageSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-#     queryset = Image.objects.all()
 
 
 from rest_framework.permissions import IsAuthenticated
@@ -86,28 +70,39 @@ def images_view(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     
-    
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Image
+from .serializers import ImageSerializer
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_comments(request, pk):
+    try:
+        image = Image.objects.get(pk=pk)
+        # if image.comments.owner != request.user:
+            # return Response({'error': 'On ly the owner of comments can update comments'}, status=status.HTTP_403_FORBIDDEN)
+        serializer = ImageSerializer(image, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Image.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
    
    
-   
-    # elif request.method == 'DELETE':
-    #     if not pk:
-    #         return Response({'detail': 'Method "DELETE" not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    #     image = get_object_or_404(Image, pk=pk)
-    #     if image.owner != request.user:
-    #         return Response(status=status.HTTP_403_FORBIDDEN)
-    #     image.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
-    
-
- # Assuming you have a serializer for the User model
-# from .serializers import UserSerializer
-# @permission_classes([IsAuthenticated])
-# @api_view(['GET'])
-# def request_methods(request):
-#      serializer = UserSerializer(request.user)
-#      return Response(serializer.data, status=status.HTTP_200_OK)
+@api_view(['DELETE'])
+def delete_image(request, pk):
+    try:
+        image = Image.objects.get(pk=pk)
+        if image.owner != request.user:
+            return Response({'error': 'Only the owner of the image can delete it'}, status=status.HTTP_403_FORBIDDEN)
+        image.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    except Image.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
   
   
